@@ -2,6 +2,8 @@ package com.chandan.androiddigest
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -42,8 +44,9 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent().apply {
             this.action = Intent.ACTION_PICK
             this.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }.also {
+            startActivityForResult(intent, RESULT_LOAD_IMAGE)
         }
-        startActivityForResult(intent, RESULT_LOAD_IMAGE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -100,11 +103,63 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == 0 && !grantResults.isEmpty()){
-            for(i in grantResults.indices){
-                if(grantResults[i] == PackageManager.PERMISSION_GRANTED) Log.i("Chandan","Granted ${permissions[i]}")
-                else Log.i("Chandan","Denied ${permissions[i]}")
+        if (requestCode == 0 && !grantResults.isEmpty()) {
+            for (i in grantResults.indices) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) Log.i(
+                    "Chandan",
+                    "Granted ${permissions[i]}"
+                )
+                else Log.i("Chandan", "Denied ${permissions[i]}")
             }
         }
+    }
+
+    fun createAlertDialog(view: View) {
+        AlertDialog.Builder(this)
+            .setTitle("Alert Dialog")
+            .setMessage("This is Alert Dialog")
+            .setPositiveButton("Yes") { dialog: DialogInterface?, which: Int ->
+                Toast.makeText(this, "acceted", Toast.LENGTH_LONG).show()
+            }
+            .setNegativeButton("No") { dialog: DialogInterface?, which: Int ->
+                Toast.makeText(this, "denied", Toast.LENGTH_LONG).show()
+            }.create().show()
+    }
+
+    fun createSingleChoiceDialog(view: View) {
+        val options = arrayOf("First", "Second", "Third")
+        AlertDialog.Builder(this)
+            .setTitle("Alert Dialog Single Choice")
+            .setSingleChoiceItems(options, 0) { dialog, which ->
+                Toast.makeText(this, "You selected ${options[which]}", Toast.LENGTH_LONG).show()
+            }
+            .setPositiveButton("Yes") { dialog: DialogInterface?, which: Int ->
+                Toast.makeText(this, "acceted", Toast.LENGTH_LONG).show()
+            }
+            .setNegativeButton("No") { dialog: DialogInterface?, which: Int ->
+                Toast.makeText(this, "denied", Toast.LENGTH_LONG).show()
+            }.create().show()
+
+    }
+
+    fun createMultiChoiceDialog(view: View) {
+        val options = arrayOf("First", "Second", "Third")
+        AlertDialog.Builder(this)
+            .setTitle("Alert Dialog Multi Choice").setMultiChoiceItems(options, booleanArrayOf(false,false,false)) {dialog, which, isChecked ->
+               if(isChecked) Toast.makeText(this, "You selected ${options[which]}", Toast.LENGTH_LONG).show()
+                else  Toast.makeText(this, "You Unselected ${options[which]}", Toast.LENGTH_LONG).show()
+            }
+            .setPositiveButton("Yes") { dialog: DialogInterface?, which: Int ->
+                Toast.makeText(this, "acceted", Toast.LENGTH_LONG).show()
+            }
+            .setNegativeButton("No") { dialog: DialogInterface?, which: Int ->
+                Toast.makeText(this, "denied", Toast.LENGTH_LONG).show()
+            }.create().show()
+    }
+
+    fun toFragmentActiivty(view: View) {
+       Intent(this,FragmentActivity::class.java).also {
+           startActivity(it)
+       }
     }
 }
