@@ -3,13 +3,16 @@ package com.chandan.androiddigest
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -20,9 +23,11 @@ import java.net.URI
 class MainActivity : AppCompatActivity() {
     private val RESULT_LOAD_IMAGE = 1
     private var imgUri: Uri? = null
+    private lateinit var pref: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        pref = getSharedPreferences("myPref", Context.MODE_PRIVATE)
         requestPermission()
     }
 
@@ -114,12 +119,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun createAlertDialog(view: View) {
+    fun createSaveAlertDialog(view: View) {
         AlertDialog.Builder(this)
             .setTitle("Alert Dialog")
             .setMessage("This is Alert Dialog")
             .setPositiveButton("Yes") { dialog: DialogInterface?, which: Int ->
-                Toast.makeText(this, "acceted", Toast.LENGTH_LONG).show()
+                val edit = pref.edit()
+                edit.apply{
+                    putString("name", editTextTextPersonName.text.toString())
+                    putString("email",editTextTextEmailAddress.text.toString())
+                    putString("pass",editTextTextPassword.text.toString())
+                    putBoolean("male",radioButton7.isChecked)
+                    apply()
+                }
+                Toast.makeText(this, "Data Saved", Toast.LENGTH_LONG).show()
             }
             .setNegativeButton("No") { dialog: DialogInterface?, which: Int ->
                 Toast.makeText(this, "denied", Toast.LENGTH_LONG).show()
@@ -161,5 +174,17 @@ class MainActivity : AppCompatActivity() {
        Intent(this,FragmentActivity::class.java).also {
            startActivity(it)
        }
+    }
+
+    fun loadData(view: View) {
+        var name = pref.getString("name", null) as CharSequence
+        val email = pref.getString("email", null)
+        val pass = pref.getString("pass", null)
+        val isMale = pref.getBoolean("male", false)
+        editTextTextPersonName.setText(name)
+        editTextTextEmailAddress.setText(email)
+        editTextTextPassword.setText(pass)
+        if(isMale) radioButton7.isChecked = true
+        else radioButton7.isChecked = true
     }
 }
