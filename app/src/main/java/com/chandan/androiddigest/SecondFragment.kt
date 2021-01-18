@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.fragment_second.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -20,13 +22,15 @@ class SecondFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-
+    private lateinit var tdadapter: TodoAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        tdadapter = TodoAdapter()
+
     }
 
     override fun onCreateView(
@@ -34,7 +38,19 @@ class SecondFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_second, container, false)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        recycleView.apply {
+            adapter = tdadapter
+            layoutManager = LinearLayoutManager(context)
+        }
+        button7.setOnClickListener(View.OnClickListener {
+            addTodoItem()
+        })
     }
 
     companion object {
@@ -56,4 +72,13 @@ class SecondFragment : Fragment() {
                 }
             }
     }
+
+    fun addTodoItem() {
+        tdadapter.addTodoItem(editTextTodo.text.toString(),false)
+        editTextTodo.setText("")
+
+    }
+
+
 }
+

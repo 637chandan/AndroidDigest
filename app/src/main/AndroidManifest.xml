@@ -15,7 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidDigest">
-        <activity android:name=".FragmentActivity"></activity>
+        <activity android:name=".FragmentActivity"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
         <activity android:name=".SecondActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
